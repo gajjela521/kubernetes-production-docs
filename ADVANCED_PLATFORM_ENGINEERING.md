@@ -8,6 +8,50 @@ This guide details the transition from manual cluster management to automated, p
 
 **Concept**: GitOps uses a Git repository as the "Source of Truth" for your infrastructure and applications. Instead of running `kubectl apply -f ...` manually, you commit YAMLs to Git, and a controller (ArgoCD) syncs the cluster to match Git.
 
+### 1.0 High-Level GitOps Flow
+
+The following diagram illustrates the complete flow from a developer pushing code to the application running as a Pod.
+
+```mermaid
+graph TD
+    subgraph Dev_Environment ["Developer Workspace"]
+        Dev[User / Developer]
+        Code[Code Changes]
+    end
+
+    subgraph VCS ["Version Control (GitHub)"]
+        GitRepo[(Git Repository)]
+    end
+
+    subgraph Control_Plane ["K8s Control Plane"]
+        ArgoCD[ArgoCD Controller]
+        API[K8s API Server]
+        CM[Controller Manager]
+    end
+
+    subgraph Data_Plane ["Worker Nodes"]
+        subgraph Node ["Worker Node"]
+            Kubelet[Kubelet]
+            Pod((Pod))
+        end
+    end
+
+    %% Flow interactions
+    Dev -->|git push| GitRepo
+    ArgoCD -->|Polls / Webhook| GitRepo
+    ArgoCD -->|Compares State| API
+    ArgoCD -->|Sync / Apply| API
+    
+    API -->|Update Deployment| CM
+    CM -->|Create ReplicaSet| API
+    API -->|Schedule Pod| Kubelet
+    Kubelet -->|Run Container| Pod
+
+    %% Styling
+    style ArgoCD fill:#f9f,stroke:#333,stroke-width:2px
+    style GitRepo fill:#fff,stroke:#333,stroke-width:2px
+```
+
 ### 1.1 ArgoCD Installation & Setup
 **Pre-requisite**: A running Kubernetes cluster.
 
