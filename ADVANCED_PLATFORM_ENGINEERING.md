@@ -218,6 +218,7 @@ spec:
           weight: 5
     ```
 
+
 ### 3.3 Troubleshooting Service Mesh
 **Issue: Service 503 Service Unavailable**
 *   **Cause**: Pilot (Istio control plane) hasn't synced configuration to the sidecar, or mTLS mismatch.
@@ -241,3 +242,26 @@ spec:
     kubectl get ns -L istio-injection
     kubectl describe pod <pod-name> # Look for 'istio-proxy' container
     ```
+
+---
+
+## 4. Official Documentation & Setup Resources
+
+Bookmark these for deep dives and latest installation binaries.
+
+### GitOps (ArgoCD)
+-   **Official Docs**: [argo-cd.readthedocs.io](https://argo-cd.readthedocs.io/en/stable/)
+-   **Getting Started Guide**: [ArgoCD Getting Started](https://argo-cd.readthedocs.io/en/stable/getting_started/)
+-   **GitHub Repo**: [argoproj/argo-cd](https://github.com/argoproj/argo-cd)
+-   **Architecture**: [Architectural Overview](https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/)
+
+### Admission Controllers (Kyverno)
+-   **Official Docs**: [kyverno.io/docs](https://kyverno.io/docs/)
+-   **Installation Guide**: [Kyverno Installation](https://kyverno.io/docs/installation/)
+-   **Policy Library**: [Kyverno Policies](https://kyverno.io/policies/) (Copy-paste production policies)
+
+### Service Mesh (Istio)
+-   **Official Docs**: [istio.io/latest/docs](https://istio.io/latest/docs/)
+-   **Setup/Install Guide**: [Istio Installation](https://istio.io/latest/docs/setup/getting-started/)
+-   **Tasks & Examples**: [Istio Tasks](https://istio.io/latest/docs/tasks/)
+-   **Debugging FAQ**: [Istio Operations & Troubleshooting](https://istio.io/latest/docs/ops/)
