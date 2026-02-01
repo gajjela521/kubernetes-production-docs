@@ -172,12 +172,12 @@ To scale securely, follow this **Golden Image** pipeline.
 ```mermaid
 graph TD
     Dev[Developer] -->|Commits Code| Git[(Git Repo)]
-    Git -->|Trigger| CI[CI Pipeline (Jenkins/Actions)]
+    Git -->|Trigger| CI["CI Pipeline (Jenkins/Actions)"]
     
     subgraph CI_Process ["CI Build Process"]
         Lint[Lint & Test]
         Build[docker build --target production]
-        Scan[Vuln Scan (Trivy/Snyk)]
+        Scan["Vuln Scan (Trivy/Snyk)"]
     end
     
     CI --> Lint --> Build --> Scan
@@ -185,7 +185,7 @@ graph TD
     Scan -->|Pass| Push[docker push]
     Scan -->|Fail| Alert[Fail Pipeline]
     
-    Push --> Registry[(Private Registry ECR/GCR)]
+    Push --> Registry[("Private Registry ECR/GCR")]
     
     Registry -->|Deploy| Prod[Production Cluster]
 ```
