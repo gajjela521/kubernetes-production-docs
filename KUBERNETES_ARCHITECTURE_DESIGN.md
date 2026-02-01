@@ -6,11 +6,12 @@ This document provides a comprehensive breakdown of the Kubernetes architecture,
 
 ## 1. High-Level Architecture Diagram
 
-Kubernetes follows a **Master-Worker** architecture (Control Plane & Nodes).
+Kubernetes follows a **Master-Worker** architecture (Control Plane & Data Plane). A single cluster consists of **one or more Control Plane nodes** and **multiple Worker Nodes** (up to 5,000+). Each Worker Node hosts **multiple Pods** (up to 110 per node by default).
 
 ```mermaid
 graph TD
-    subgraph Control_Plane ["Control Plane (Master Node)"]
+    subgraph Control_Plane ["Control Plane (Master Nodes)"]
+        direction TB
         API[API Server]
         ETCD[(etcd)]
         SCHED[Scheduler]
@@ -18,18 +19,41 @@ graph TD
         CCM[Cloud Controller Manager]
     end
 
-    subgraph Node1 ["Worker Node 1"]
-        K1[Kubelet]
-        P1[Kube Proxy]
-        C1[Container Runtime]
-        Pod1((Pod))
-    end
+    subgraph Cluster_Nodes ["Data Plane (Worker Nodes)"]
+        direction LR
+        
+        subgraph Node1 ["Worker Node 1"]
+            K1[Kubelet]
+            P1[Kube Proxy]
+            CR1[Container Runtime]
+            subgraph Pods1 ["running pods"]
+                Pod1_1((Pod 1))
+                Pod1_2((Pod 2))
+                Pod1_N((... Pod N))
+            end
+        end
 
-    subgraph Node2 ["Worker Node 2"]
-        K2[Kubelet]
-        P2[Kube Proxy]
-        C2[Container Runtime]
-        Pod2((Pod))
+        subgraph Node2 ["Worker Node 2"]
+            K2[Kubelet]
+            P2[Kube Proxy]
+            CR2[Container Runtime]
+            subgraph Pods2 ["running pods"]
+                Pod2_1((Pod 1))
+                Pod2_2((Pod 2))
+                Pod2_N((... Pod N))
+            end
+        end
+
+        subgraph NodeN ["Worker Node ... N"]
+            KN[Kubelet]
+            PN[Kube Proxy]
+            CRN[Container Runtime]
+            subgraph PodsN ["running pods"]
+                PodN_1((Pod 1))
+                PodN_2((Pod 2))
+                PodN_N((... Pod N))
+            end
+        end
     end
 
     %% Connections
@@ -39,15 +63,27 @@ graph TD
     API <--> CM
     API <--> CCM
     
-    API <--> K1
-    API <--> K2
+    %% Control Plane -> Nodes
+    API <==> K1
+    API <==> K2
+    API <==> KN
     
-    K1 --> C1
-    C1 --> Pod1
+    %% Node Internals
+    K1 --> CR1
+    CR1 --> Pods1
     
-    K2 --> C2
-    C2 --> Pod2
+    K2 --> CR2
+    CR2 --> Pods2
+    
+    KN --> CRN
+    CRN --> PodsN
 ```
+
+### Scalability Limits (Approximate)
+*   **Nodes per cluster**: ~5,000
+*   **Pods per cluster**: ~150,000
+*   **Pods per node**: ~110 (configurable)
+*   **Containers per pod**: Unlimited (practically limited by resources)
 
 ---
 
