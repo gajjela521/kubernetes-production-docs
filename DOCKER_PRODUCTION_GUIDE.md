@@ -19,7 +19,7 @@ graph LR
     end
 
     subgraph Host ["Docker Host"]
-        Daemon[Docker Daemon (dockerd)]
+        Daemon["Docker Daemon (dockerd)"]
         
         subgraph Images_Store ["Local Images"]
             Img1[Image A]
